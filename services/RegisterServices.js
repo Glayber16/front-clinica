@@ -3,7 +3,7 @@ import http from "@/http-common";
 export default class RegisterService{
     async Register(data){
         try{
-            const response = await http.post('/User', data);
+            const response = await http.post('/User/register', data);
             return response.data;
         }
         catch(error){

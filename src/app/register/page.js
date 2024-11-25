@@ -10,8 +10,9 @@ import Link from 'next/link';
 import Navbar from '@/components/ui/navbar';
 import Footer from '@/components/ui/footer';
 import RegisterService from '../../../services/RegisterServices';
+import { Router, useRouter } from 'next/navigation';
 
-function Page() {
+function page() {
   const [formData, setFormData] = useState({
     Nome: "",
     date: "",
@@ -20,6 +21,7 @@ function Page() {
     SenhaHash: "",
     TipoUsuario: "patient" 
   });
+  const router = useRouter();
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
@@ -37,6 +39,8 @@ function Page() {
       const response = await registerService.Register(formData); 
       console.log('Usuário cadastrado com sucesso:', response);
       alert("Cadastro concluido"); 
+      router.push("/login");
+      
     } 
     catch (error) {
       alert(error.response.data.error);
@@ -63,53 +67,24 @@ function Page() {
               <form onSubmit={handleSubmit}>
                 <div className="space-y-2">
                   <Label htmlFor="Nome">Nome completo</Label>
-                  <Input
-                    id="Nome"
-                    value={formData.Nome}
-                    onChange={handleInputChange}
-                    required
-                  />
+                  <Input id="Nome" value={formData.Nome}  onChange={handleInputChange}  required  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="date">Data de Nascimento</Label>
-                  <Input
-                    id="date"
-                    type="date"
-                    value={formData.date}
-                    onChange={handleInputChange}
-                    required
-                  />
+                  <Input id="date" type="date" value={formData.date} onChange={handleInputChange} required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="CPF">CPF</Label>
-                  <Input
-                    id="CPF"
-                    value={formData.CPF}
-                    onChange={handleInputChange}
-                    required
-                  />
+                  <Input id="CPF" value={formData.CPF} onChange={handleInputChange}  required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                  />
+                  <Input id="email" type="email" value={formData.email} onChange={handleInputChange}  required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="SenhaHash">Senha</Label>
-                  <Input
-                    id="SenhaHash"
-                    type="password"
-                    value={formData.SenhaHash}
-                    onChange={handleInputChange}
-                    required
-                  />
+                  <Input id="SenhaHash" type="password" value={formData.SenhaHash}  onChange={handleInputChange} required />
                 </div>
-
                 <div className="space-y-2">
                   <Label htmlFor="TipoUsuario">Tipo de conta</Label>
                   <Select onValueChange={(value) => setFormData({...formData, TipoUsuario: value})} value={formData.TipoUsuario}>
@@ -123,9 +98,7 @@ function Page() {
                   </Select>
                 </div>
                 <CardFooter className="py-3">
-                  <Button className="w-full bg-[#7ED321] hover:bg-[#006647] text-white" type="submit">
-                    Criar Conta
-                  </Button>
+                  <Button className="w-full bg-[#7ED321] hover:bg-[#006647] text-white" type="submit"> Criar Conta </Button>
                 </CardFooter>
               </form>
             </CardContent>
@@ -142,4 +115,4 @@ function Page() {
   );
 }
 
-export default Page;
+export default page;
