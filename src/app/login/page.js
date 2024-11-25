@@ -11,42 +11,47 @@ import {Router, useRouter} from "next/navigation"
 import LoginService from "../../../services/LoginServices"
 import React, { useState } from 'react';
 
+
 function page() {
     const [formData, setFormData] = useState({
+        nome: "string", 
+        cpf: "string", 
         email: "",
         SenhaHash: "",
+        tipoUsuario: "string", 
     });
-    
-      const handleInputChange = (e) => {
+    const router = useRouter();
+
+    const handleInputChange = (e) => {
         const { id, value } = e.target;
         setFormData({
-          ...formData,
-          [id]: value,
+            ...formData,
+            [id]: value,
         });
-      };
-      
-      
+    };
+
     const handleLogin = async (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
         const loginService = new LoginService();
-        
+
         try {
-            console.log('Enviando dados para o backend:', formData);
-            const response = await loginService.Login(formData); 
-            console.log('Usuario logado com sucesso:', response);
-            router.push("/home");
-          
+            
+            const response = await loginService.Login(formData);
+            localStorage.setItem("token", response.token);
+            localStorage.setItem("userData", JSON.stringify(response.user));
+            router.push("/homePatient");
         } 
         catch (error) {
-            console.error('Erro completo:', error);
+            console.error("Erro completo:", error);
             if (error.response) {
+                console.error("Erro da API:", error.response.data);
                 alert(`Erro ao tentar logar: ${error.response.data || error.response.statusText}`);
             } else {
                 alert(`Erro ao tentar logar: ${error.message}`);
             }
         }
-      };
-    const router = useRouter();
+    };
+    
   return (
     <div className=" bg-[#EAF4FB] bg-cover ">
         <Navbar/>
