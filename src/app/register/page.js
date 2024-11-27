@@ -15,11 +15,12 @@ import { Router, useRouter } from 'next/navigation';
 function page() {
   const [formData, setFormData] = useState({
     Nome: "",
-    date: "",
     CPF: "",
     email: "",
     SenhaHash: "",
-    TipoUsuario: "patient" 
+    TipoUsuario: "patient", 
+    date: "",
+    CRM:"",
   });
   const router = useRouter();
 
@@ -30,7 +31,6 @@ function page() {
       [id]: value
     });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault(); 
     const registerService = new RegisterService();
@@ -68,10 +68,6 @@ function page() {
                 <div className="space-y-2">
                   <Label htmlFor="Nome">Nome completo</Label>
                   <Input id="Nome" value={formData.Nome}  onChange={handleInputChange}  required  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="date">Data de Nascimento</Label>
-                  <Input id="date" type="date" value={formData.date} onChange={handleInputChange} required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="CPF">CPF</Label>

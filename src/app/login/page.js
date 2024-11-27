@@ -14,11 +14,13 @@ import React, { useState } from 'react';
 
 function page() {
     const [formData, setFormData] = useState({
-        nome: "string", 
-        cpf: "string", 
+        nome: "", 
+        cpf: "", 
         email: "",
         SenhaHash: "",
-        tipoUsuario: "string", 
+        tipoUsuario: "", 
+        date: "",
+        CRM: "",
     });
     const router = useRouter();
 
@@ -39,7 +41,13 @@ function page() {
             const response = await loginService.Login(formData);
             localStorage.setItem("token", response.token);
             localStorage.setItem("userData", JSON.stringify(response.user));
-            router.push("/homePatient");
+            if(response.user.tipoUsuario == "patient"){
+                router.push("/homePatient");
+            }
+            else{
+                router.push("/homeDoctor");
+            }
+            
         } 
         catch (error) {
             console.error("Erro completo:", error);
