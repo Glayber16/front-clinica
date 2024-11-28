@@ -21,20 +21,11 @@ export default function Navbar() {
                         <div className='flex flex-col text-xl font-semibold md:hidden  text-[#133E6C] gap-x-16'></div>
                         <div className='flex flex-col'> 
                             <li className=''>
-                                <Link href="/home">
+                                <Link href="/">
                                     <Button variant="ghost">Home</Button>
                                 </Link>
-                            </li>
-                            <li>
-                                <Link href="/about">
-                                    <Button variant="ghost">Sobre</Button>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/contact">
-                                    <Button variant="ghost">Home</Button>
-                                </Link>
-                            </li>
+                            </li>                   
+                        
                             <li>
                                 <Link href="/login">
                                     <Button variant="ghost">Entrar</Button>
@@ -52,20 +43,12 @@ export default function Navbar() {
             </div>
             <div className='md:flex hidden items-center gap-14 gap-y-6'> 
                 <li className=''>
-                    <Link href="/home">
+                    <Link href="/">
                         <Button variant="ghost">Home</Button>
                     </Link>
                 </li>
-                <li>
-                    <Link href="/about">
-                        <Button variant="ghost">Sobre</Button>
-                    </Link>
-                </li>
-                <li>
-                    <Link href="/contact">
-                        <Button variant="ghost">Home</Button>
-                    </Link>
-                </li>
+
+               
                 <li>
                     <Link href="/login">
                         <Button variant="ghost">Entrar</Button>

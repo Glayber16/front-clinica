@@ -16,40 +16,69 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import AttService from "../../../services/AttServices";
+import LogoutButton from "@/components/ui/logout";
 export default function PatientHomepage() {
   const [patientData, setPatientData] = useState({});
 
   const [formData, setFormData] = useState({
     name: patientData.name,
-    dob: patientData.dob,
+    date: patientData.date,
     cpf: patientData.cpf,
   })
   useEffect(() => {
     const userData = localStorage.getItem("userData");
     if (userData) {
-      setPatientData(JSON.parse(userData));
+        const parsedData = JSON.parse(userData);
+        setPatientData(parsedData);
+
+        // Preenche os campos do formulário com os dados existentes
+        setFormData({
+            name: parsedData.nome || "",
+            date: parsedData.dataNascimento || "",
+            cpf: parsedData.cpf || "",
+        });
     }
-  }, []);
+}, []);
 
   
 
   const handleInputChange = (e) => {
+    const { id, value } = e.target;
     setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    })
-  }
+        ...formData,
+        [id]: value,
+    });
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setPatientData(formData)
-    // Here you would typically send the updated data to your backend
-    console.log("Updated data:", formData)
+    const updatedData = {
+      nome: formData.name || patientData.nome,
+      date: formData.date || patientData.dataNascimento,
+      cpf: formData.cpf || patientData.cpf,
+  };
+    const attService = new AttService();
+    try{
+      const response = await attService.Atualizar(patientData.id, updatedData);
+      const newPatientData = { ...patientData, ...updatedData };
+      setPatientData(newPatientData);
+      localStorage.setItem("userData", JSON.stringify(newPatientData));
+      console.log('Dados atualizados com sucesso:', response);
+      alert("Dados atualizados!!"); 
+    }
+    catch(error){    
+      alert(error.response.data.error);
+      console.error('Erro ao atualizar:', error);
+      
+    }
+    
   }
 
   return (
     <div className=" bg-[#EAF4FB]"> 
       <Navbar></Navbar>
+      <LogoutButton/>
       <div className="container mx-auto max-w-4xl min-h-screen p-4">
         <h1 className="text-3xl font-bold mb-6 text-[#4A90E2]">Bem-vindo(a), {patientData.nome}</h1>
         
@@ -71,7 +100,7 @@ export default function PatientHomepage() {
               <div className="space-y-2">
                 <div className="flex justify-between items-center py-2 border-b border-blue-100">
                   <span className="font-medium ">Data de Nascimento:</span>
-                  <span className="">{patientData.date}</span>
+                  <span className="">{patientData.dataNascimento}</span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b border-blue-100">
                   <span className="font-medium ">CPF:</span>
@@ -116,13 +145,13 @@ export default function PatientHomepage() {
                         />
                       </div>
                       <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="dob" className="text-right">
+                        <Label htmlFor="date" className="text-right">
                           Data de Nascimento
                         </Label>
                         <Input
-                          id="dob"
-                          name="dob"
-                          value={formData.dob}
+                          id="date"
+                          name="date"
+                          value={formData.date}
                           onChange={handleInputChange}
                           className="col-span-3"
                         />
