@@ -63,7 +63,8 @@ export default function PatientHomepage() {
         ...formData,
         [id]: value,
     });
-};
+}
+
 
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -72,14 +73,14 @@ const handleSubmit = async (e) => {
 
   const userService = new UserService();
   try {
-    const formattedDate = new Date(formData.dataNascimento).toISOString();
+   
     const updatedData = {
       nome: formData.nome,
       cpf: formData.cpf,
       Email: formData.Email,
       SenhaHash: formData.SenhaHash,
       TipoUsuario: formData.TipoUsuario,
-      dataNascimento: formattedDate
+      dataNascimento: formData.dataNascimento
     };
 
     console.log("Dados enviados:", updatedData);
@@ -94,8 +95,8 @@ const handleSubmit = async (e) => {
       Email: formData.Email,
       SenhaHash: formData.SenhaHash,
       TipoUsuario: formData.TipoUsuario,
-      dataNascimento: formattedDate,
-    });
+      dataNascimento: formData.dataNascimento
+    }); 
     alert("Dados atualizados com sucesso!");
   } catch (error) {
     console.error("Erro ao atualizar usuário:", error);
