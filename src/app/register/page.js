@@ -12,6 +12,7 @@ import Footer from '@/components/ui/footer';
 import UserService from '../../../services/UserServices';
 import { Router, useRouter } from 'next/navigation';
 
+
 function page() {
   const [formData, setFormData] = useState({
     Nome: "",
@@ -38,7 +39,7 @@ function page() {
     try {
       const response = await userService.Register(formData); 
       console.log('Usuário cadastrado com sucesso:', response);
-      alert("Cadastro concluido"); 
+      alert("Cadastro concluído com sucesso!");
       router.push("/login");
       
     } 
@@ -47,6 +48,7 @@ function page() {
       if (error.response && error.response.data) {
         console.error('Detalhes do erro:', error.response.data);
       }
+      alert("Erro ao cadastrar usuário. Tente novamente!");
     }
   };
 

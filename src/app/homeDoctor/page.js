@@ -9,13 +9,19 @@ import LogoutButton from "@/components/ui/logout";
 import CreateMedicalRecordButton from "@/components/ui/createrecord";
 import Navbar from "@/components/ui/navbar";
 import DeleteMedicalRecordButton from "@/components/ui/deleterecord";
+import { toast } from 'react-toastify';
 
 export default function DoctorHomepage() {
   const [patients, setPatients] = useState([]);
   const [doctorData, setDoctorData] = useState({});
   const [selectedPatient, setSelectedPatient] = useState([]);  
 
-  
+  const formatDate = (isoDate) => {
+    if (!isoDate) return "Data inválida"; 
+    const date = new Date(isoDate);
+    if (isNaN(date)) return "Data inválida";
+    return new Intl.DateTimeFormat("pt-BR").format(date); 
+  };
  
 
   const ListPatients = async () => {
@@ -23,7 +29,8 @@ export default function DoctorHomepage() {
     try {
       const response = await userServices.Listar();
       setPatients(response.data);
-    } catch (error) {
+    } 
+    catch (error) {
       console.log(error);
     }
   };
@@ -112,7 +119,7 @@ export default function DoctorHomepage() {
                     <TableRow key={patient.id}>
                       <TableCell className="font-medium">{patient.id}</TableCell>
                       <TableCell className="font-medium">{patient.nome}</TableCell>
-                      <TableCell>{patient.dataNascimento}</TableCell>
+                      <TableCell>{formatDate(patient.dataNascimento)}</TableCell>
                       <TableCell onClick={() => setSelectedPatient(patient)}>
                         
                         <MedicalRecordModal  patient={selectedPatient} />

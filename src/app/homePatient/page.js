@@ -19,6 +19,7 @@ import {
 import UserService from "../../../services/UserServices";
 import LogoutButton from "@/components/ui/logout";
 import MedicalRecordModal from "@/components/ui/medicalrecord";
+
 export default function PatientHomepage() {
 
   const [formData, setFormData] = useState({
@@ -30,13 +31,30 @@ export default function PatientHomepage() {
       dataNascimento: ""
   })
  
+  const formatDate = (isoDate) => {
+    if (!isoDate) return "Data inválida"; 
+    const date = new Date(isoDate);
+    if (isNaN(date)) return "Data inválida";
+    return new Intl.DateTimeFormat("pt-BR").format(date); 
+  };
+  
+  
 
   useEffect(() => {
-  const userData = JSON.parse(localStorage.getItem("userData"));
-  if (userData) {
-    setFormData(userData);
-  }
-}, []);
+    const userData = JSON.parse(localStorage.getItem("userData"));
+    if (userData) {
+      setFormData({
+        id: userData.id || "",
+        nome: userData.nome || "",
+        cpf: userData.cpf || "",
+        dataNascimento: userData.dataNascimento || "",
+        Email: userData.Email || "",
+        SenhaHash: userData.SenhaHash || "",
+        TipoUsuario: userData.TipoUsuario || "",
+      });
+    }
+  }, []);
+  
   
 
   const handleInputChange = (e) => {
@@ -47,39 +65,51 @@ export default function PatientHomepage() {
     });
 };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const userService = new UserService();
-    try{
-      const formattedDate = new Date(formData.dataNascimento).toLocaleDateString("pt-BR");
-      const updatedData = {
-        nome: formData.nome,
-        cpf: formData.cpf,
-        Email: formData.Email,
-        SenhaHash: formData.SenhaHash,
-        TipoUsuario: formData.TipoUsuario,
-        dataNascimento: formattedDate
-      }; 
-      const response = await userService.AtualizarPaciente(formData.id, updatedData);
-      const newformData = { ...formData, ...updatedData };
-      setFormData(newformData);
-      localStorage.setItem("userData", JSON.stringify(newformData));
-      console.log('Dados atualizados com sucesso:', response);
-      alert("Dados atualizados!!"); 
+ 
+
+  const userService = new UserService();
+  try {
+    const formattedDate = new Date(formData.dataNascimento).toISOString();
+    const updatedData = {
+      nome: formData.nome,
+      cpf: formData.cpf,
+      Email: formData.Email,
+      SenhaHash: formData.SenhaHash,
+      TipoUsuario: formData.TipoUsuario,
+      dataNascimento: formattedDate
+    };
+
+    console.log("Dados enviados:", updatedData);
+
+    const response = await userService.AtualizarPaciente(formData.id, updatedData);
+    const newformData = { ...formData, ...updatedData };
+    setFormData(newformData);
+    localStorage.setItem("userData", JSON.stringify(newformData));
+    console.log("Dados enviados:", {
+      nome: formData.nome,
+      cpf: formData.cpf,
+      Email: formData.Email,
+      SenhaHash: formData.SenhaHash,
+      TipoUsuario: formData.TipoUsuario,
+      dataNascimento: formattedDate,
+    });
+    alert("Dados atualizados com sucesso!");
+  } catch (error) {
+    console.error("Erro ao atualizar usuário:", error);
+    if (error.response && error.response.data) {
+      console.error("Detalhes do erro:", error.response.data);
     }
-    catch (error) {
-      console.error('Erro ao atualizar usuario:', error);
-      if (error.response && error.response.data) {
-        console.error('Detalhes do erro:', error.response.data);
-      }
-  }
     
   }
+};
 
   return (
     <div className=" bg-[#EAF4FB]"> 
-      <Navbar></Navbar>
+   
+      <Navbar/>
       <LogoutButton/>
       <div className="container mx-auto max-w-4xl min-h-screen p-4">
         <h1 className="text-3xl font-bold mb-6 text-[#4A90E2]">Bem-vindo(a), {formData.nome}</h1>
@@ -102,7 +132,7 @@ export default function PatientHomepage() {
               <div className="space-y-2">
                 <div className="flex justify-between items-center py-2 border-b border-blue-100">
                   <span className="font-medium ">Data de Nascimento:</span>
-                  <span className="">{formData.dataNascimento}</span>
+                  <span className="">{formatDate(formData.dataNascimento)}</span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b border-blue-100">
                   <span className="font-medium ">CPF:</span>

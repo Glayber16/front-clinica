@@ -12,6 +12,7 @@ import UserService from "../../../services/UserServices";
 import React, { useState } from 'react';
 
 
+
 function page() {
     const [formData, setFormData] = useState({
         nome: "", 
@@ -51,12 +52,10 @@ function page() {
         } 
         catch (error) {
             console.error("Erro completo:", error);
-            if (error.response) {
-                console.error("Erro da API:", error.response.data);
-                alert(`Erro ao tentar logar: ${error.response.data || error.response.statusText}`);
-            } else {
-                alert(`Erro ao tentar logar: ${error.message}`);
-            }
+            if (error.response && error.response.data) {
+                console.error('Detalhes do erro:', error.response.data);
+              }
+            alert("Erro ao Logar usuário. Tente novamente!");
         }
     };
     
@@ -98,7 +97,7 @@ function page() {
                     </form>
                     </CardContent>
                     <div className="flex justify-center items-center"> 
-                        <h1>Ainda não possui uma conta ? <Link href={"/register"} className="hover:text-[#006647] hover:underline">Criar conta</Link> </h1>
+                        <h1>Ainda não possui uma conta? <Link href={"/register"} className="hover:text-[#006647] hover:underline">Criar conta</Link> </h1>
                     </div>
                 </Card>
             
