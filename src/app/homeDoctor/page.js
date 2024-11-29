@@ -9,7 +9,7 @@ import LogoutButton from "@/components/ui/logout";
 import CreateMedicalRecordButton from "@/components/ui/createrecord";
 import Navbar from "@/components/ui/navbar";
 import DeleteMedicalRecordButton from "@/components/ui/deleterecord";
-import { toast } from 'react-toastify';
+
 
 export default function DoctorHomepage() {
   const [patients, setPatients] = useState([]);
