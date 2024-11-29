@@ -9,7 +9,7 @@ import { HeartPulse } from 'lucide-react';
 import Link from 'next/link';
 import Navbar from '@/components/ui/navbar';
 import Footer from '@/components/ui/footer';
-import RegisterService from '../../../services/RegisterServices';
+import UserService from '../../../services/UserServices';
 import { Router, useRouter } from 'next/navigation';
 
 function page() {
@@ -19,7 +19,7 @@ function page() {
     email: "",
     SenhaHash: "",
     TipoUsuario: "patient", 
-    date: "",
+    dataNascimento: "",
     CRM:"",
   });
   const router = useRouter();
@@ -33,18 +33,20 @@ function page() {
   };
   const handleSubmit = async (e) => {
     e.preventDefault(); 
-    const registerService = new RegisterService();
+    const userService = new UserService();
     
     try {
-      const response = await registerService.Register(formData); 
+      const response = await userService.Register(formData); 
       console.log('Usuário cadastrado com sucesso:', response);
       alert("Cadastro concluido"); 
       router.push("/login");
       
     } 
     catch (error) {
-      alert(error.response.data.error);
-      console.error('Erro ao cadastrar usuário:', error);
+      console.error('Erro ao atualizar usuario:', error);
+      if (error.response && error.response.data) {
+        console.error('Detalhes do erro:', error.response.data);
+      }
     }
   };
 

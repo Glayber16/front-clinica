@@ -8,7 +8,7 @@ import Link from "next/link";
 import Navbar from '@/components/ui/navbar'
 import Footer from '@/components/ui/footer'
 import {Router, useRouter} from "next/navigation"
-import LoginService from "../../../services/LoginServices"
+import UserService from "../../../services/UserServices";
 import React, { useState } from 'react';
 
 
@@ -34,11 +34,11 @@ function page() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        const loginService = new LoginService();
+        const userService = new UserService();
 
         try {
             
-            const response = await loginService.Login(formData);
+            const response = await userService.Login(formData);
             localStorage.setItem("token", response.token);
             localStorage.setItem("userData", JSON.stringify(response.user));
             if(response.user.tipoUsuario == "patient"){

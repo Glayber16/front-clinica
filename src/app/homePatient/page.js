@@ -16,31 +16,27 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import AttService from "../../../services/AttServices";
+import UserService from "../../../services/UserServices";
 import LogoutButton from "@/components/ui/logout";
+import MedicalRecordModal from "@/components/ui/medicalrecord";
 export default function PatientHomepage() {
-  const [patientData, setPatientData] = useState({});
 
   const [formData, setFormData] = useState({
-    name: patientData.name,
-    date: patientData.date,
-    cpf: patientData.cpf,
+      Email: "",
+      SenhaHash:"",
+      TipoUsuario:"",
+      nome: "", 
+      cpf: "", 
+      dataNascimento: ""
   })
+ 
+
   useEffect(() => {
-    const userData = localStorage.getItem("userData");
-    if (userData) {
-        const parsedData = JSON.parse(userData);
-        setPatientData(parsedData);
-
-        // Preenche os campos do formulário com os dados existentes
-        setFormData({
-            name: parsedData.nome || "",
-            date: parsedData.dataNascimento || "",
-            cpf: parsedData.cpf || "",
-        });
-    }
+  const userData = JSON.parse(localStorage.getItem("userData"));
+  if (userData) {
+    setFormData(userData);
+  }
 }, []);
-
   
 
   const handleInputChange = (e) => {
@@ -53,25 +49,31 @@ export default function PatientHomepage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const updatedData = {
-      nome: formData.name || patientData.nome,
-      date: formData.date || patientData.dataNascimento,
-      cpf: formData.cpf || patientData.cpf,
-  };
-    const attService = new AttService();
+
+    const userService = new UserService();
     try{
-      const response = await attService.Atualizar(patientData.id, updatedData);
-      const newPatientData = { ...patientData, ...updatedData };
-      setPatientData(newPatientData);
-      localStorage.setItem("userData", JSON.stringify(newPatientData));
+      const formattedDate = new Date(formData.dataNascimento).toLocaleDateString("pt-BR");
+      const updatedData = {
+        nome: formData.nome,
+        cpf: formData.cpf,
+        Email: formData.Email,
+        SenhaHash: formData.SenhaHash,
+        TipoUsuario: formData.TipoUsuario,
+        dataNascimento: formattedDate
+      }; 
+      const response = await userService.AtualizarPaciente(formData.id, updatedData);
+      const newformData = { ...formData, ...updatedData };
+      setFormData(newformData);
+      localStorage.setItem("userData", JSON.stringify(newformData));
       console.log('Dados atualizados com sucesso:', response);
       alert("Dados atualizados!!"); 
     }
-    catch(error){    
-      alert(error.response.data.error);
-      console.error('Erro ao atualizar:', error);
-      
-    }
+    catch (error) {
+      console.error('Erro ao atualizar usuario:', error);
+      if (error.response && error.response.data) {
+        console.error('Detalhes do erro:', error.response.data);
+      }
+  }
     
   }
 
@@ -80,7 +82,7 @@ export default function PatientHomepage() {
       <Navbar></Navbar>
       <LogoutButton/>
       <div className="container mx-auto max-w-4xl min-h-screen p-4">
-        <h1 className="text-3xl font-bold mb-6 text-[#4A90E2]">Bem-vindo(a), {patientData.nome}</h1>
+        <h1 className="text-3xl font-bold mb-6 text-[#4A90E2]">Bem-vindo(a), {formData.nome}</h1>
         
         <div className="grid gap-6 md:grid-cols-2">
           <Card className="bg-white shadow-lg">
@@ -93,18 +95,18 @@ export default function PatientHomepage() {
             <CardContent className="pt-6 text-[#4A90E2]">
               <div className="flex items-center space-x-4 mb-4">
                 <div>
-                  <h2 className="text-xl font-semibold ">{patientData.nome}</h2>
+                  <h2 className="text-xl font-semibold ">{formData.nome}</h2>
                   <p className="text-sm ">Paciente</p>
                 </div>
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between items-center py-2 border-b border-blue-100">
                   <span className="font-medium ">Data de Nascimento:</span>
-                  <span className="">{patientData.dataNascimento}</span>
+                  <span className="">{formData.dataNascimento}</span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b border-blue-100">
                   <span className="font-medium ">CPF:</span>
-                  <span className="">{patientData.cpf}</span>
+                  <span className="">{formData.cpf}</span>
                 </div>
               </div>
             </CardContent>
@@ -119,7 +121,7 @@ export default function PatientHomepage() {
                   Atualizar Dados de cadastro
                   <Dialog>
                 <DialogTrigger asChild>
-                  <Button className="w-full mt-4 bg-[#006647] hover:bg-[#4A90E2] text-white">
+                  <Button className="w-full mt-4 bg-[white] hover:bg-[#4A90E2] text-black">
                     Atualizar Informações
                   </Button>
                 </DialogTrigger>
@@ -133,25 +135,25 @@ export default function PatientHomepage() {
                   <form onSubmit={handleSubmit}>
                     <div className="grid gap-4 py-4">
                       <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="name" className="text-right">
+                        <Label htmlFor="nome" className="text-right">
                           Nome
                         </Label>
                         <Input
-                          id="name"
-                          name="name"
-                          value={formData.name}
+                          id="nome"
+                          name="nome"
+                          value={formData.nome || ""}
                           onChange={handleInputChange}
                           className="col-span-3"
                         />
                       </div>
                       <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="date" className="text-right">
+                        <Label htmlFor="dataNascimento" className="text-right">
                           Data de Nascimento
                         </Label>
                         <Input
-                          id="date"
-                          name="date"
-                          value={formData.date}
+                          id="dataNascimento"
+                          name="dataNascimento"
+                          value={formData.dataNascimento || ""}
                           onChange={handleInputChange}
                           className="col-span-3"
                         />
@@ -163,7 +165,7 @@ export default function PatientHomepage() {
                         <Input
                           id="cpf"
                           name="cpf"
-                          value={formData.cpf}
+                          value={formData.cpf || ""}
                           onChange={handleInputChange}
                           className="col-span-3"
                         />
@@ -189,9 +191,7 @@ export default function PatientHomepage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-4">
-                  <Button className="w-full bg-[#006647] hover:bg-[#4A90E2] text-white">
-                    Ver Prontuário
-                  </Button>
+                  <MedicalRecordModal  patient={formData}/>
                 </CardContent>
               </Card>
 
